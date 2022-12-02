@@ -57,9 +57,12 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
   )
 
   const { activeCycleId, cycles } = cyclesState
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(() => {
-    const secondsDifference = differenceInSeconds(new Date())
+    if (activeCycle) {
+      return differenceInSeconds(new Date(), new Date(activeCycle.startDate))
+    }
 
     return 0
   })
@@ -69,8 +72,6 @@ export function CycleContextProvider({ children }: CycleContextProviderProps) {
 
     localStorage.setItem('@pomodoro:cycles-state-1.0.0', stateJSON)
   }, [cyclesState])
-
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   function markCurrentCycleAsFinished() {
     dispatch(markCurrentCycleAsFinishedAction())
